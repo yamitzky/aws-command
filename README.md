@@ -1,7 +1,7 @@
 aws-command
 ===========
 
-Utility AWS[Amazon Web Service] commands
+Utility AWS -Amazon Web Service- commands
 
 ## Command List
 
@@ -9,4 +9,4 @@ Utility AWS[Amazon Web Service] commands
 LaunchConfigに指定されたScale outの元となるインスタンスのAMIを変更する。
 Changes AMI ID of an instance used when a server automatically scaled out, which is described in LaunchConfig of AutoScalingGroup.
 
-[Amazon WebserviceのAuto Scalingの設定について][http://mtl.recruit.co.jp/blog/2011/10/amazon_webservice_autoscaling.html]
+c.f. [Amazon WebserviceのAuto Scalingの設定について](http://mtl.recruit.co.jp/blog/2011/10/amazon_webservice_autoscaling.html)
