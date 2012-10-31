@@ -1,0 +1,75 @@
+#!/bin/env ruby
+
+require "optparse"
+
+config_name = ARGV.shift
+group_name = ARGV.shift
+global_options = {
+  # "region" => "ap-northeast-1"
+}
+launch_config_options = {
+  "instance-type" => "m1.small",
+  "group" => "WEB",
+  "key" => "pipokue"
+}
+
+class Hash
+  def as_argv
+    argv = []
+    self.each_pair do |key, value|
+      argv << "--#{key}"
+      argv << value
+    end 
+    return argv
+  end
+end
+
+class AS
+  def initialize(global_options={})
+    @options = global_options
+  end
+
+  def create_launch_config(name, options_argv=[])
+    @name = name
+    AS.execute "as-create-launch-config #{name} #{(@options.as_argv + options_argv).join(" ")}"
+  end
+
+  def update_auto_scaling_group(name)
+    unless @name
+      puts "No LaunchConfigName given"
+    else
+      AS.execute "as-update-auto-scaling-group #{name} #{@options.as_argv.join(" ")} --launch-configuration #{@name}"
+    end
+  end
+
+  def AS.execute(command)
+    puts "\e[33m[command] \e[0m#{command}"
+    system "#{command}"
+  end
+end
+
+$help_executed = false
+def help
+  puts [
+    "Usage: ",
+    "as-update-ami",
+    "    LaunchConfigurationName AutoScalingGroupName --image-id value",
+    "    [LaunchConfiguration Options]",
+    "If you want to use Global Options, write down on the code"
+  ].join("\n")
+  exit
+end
+
+OptionParser.new do |opt|
+  opt.on('-h', '--help') { help }
+  opt.on('--image-id [value]') { |v| $image_id = v }
+  opt.permute ARGV
+
+  if $image_id && config_name && group_name
+    as = AS.new(global_options)
+    as.create_launch_config config_name, (ARGV + launch_config_options.as_argv)
+    as.update_auto_scaling_group group_name
+  else
+    help
+  end
+end
